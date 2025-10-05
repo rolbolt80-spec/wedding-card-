@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Eran & Mikasa — Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&family=Amiri&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maxw:920px;
+    --book-h:580px;
+    --accent:#9b3e46;
+    --muted:#6e5157;
+    --bg:#fff6f8;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(180deg,#fff8fb,#fff0f2);
+    font-family:'Playfair Display',serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* GENERAL WRAPPER */
+  .container{
+    width:94%;
+    max-width:var(--maxw);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+
+  /* STANDALONE COVER (shows first) */
+  .cover {
+    width:100%;
+    max-width:780px;
+    height:var(--book-h);
+    border-radius:20px;
+    background:rgba(255,255,255,0.98);
+    box-shadow:0 22px 60px rgba(0,0,0,0.12);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+
+  .cover-inner {
+    text-align:center;
+    padding:36px;
+    max-width:86%;
+  }
+  .cover h1 {
+    margin:6px 0;
+    font-family:'Great Vibes',cursive;
+    color:var(--accent);
+    font-size:40px;
+  }
+  .cover p {
+    margin:8px 0 18px;
+    color:var(--muted);
+    font-family:'Amiri',serif;
+    font-size:16px;
+  }
+  .cover-photo {
+    width:160px;
+    height:160px;
+    border-radius:50%;
+    overflow:hidden;
+    margin:12px auto;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  }
+  .cover-photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .coverSparkles { position:absolute; inset:0; pointer-events:none; z-index:5; }
+
+  .coverSparkles span{
+    position:absolute;
+    font-size:18px;
+    opacity:0;
+    transform:scale(.6);
+    animation: sparkle .95s ease forwards;
+  }
+  @keyframes sparkle{
+    0%{opacity:0; transform:scale(.4) translateY(0) rotate(0deg)}
+    40%{opacity:1; transform:scale(1.2) translateY(-18px) rotate(180deg)}
+    100%{opacity:0; transform:scale(.6) translateY(-40px) rotate(360deg)}
+  }
+
+  /* BOOK (hidden initially) */
+  .book-wrap{
+    width:100%;
+    max-width:780px;
+    height:var(--book-h);
+    position:relative;
+    perspective:2200px;
+    display:none; /* show after open */
+    align-items:center;
+    justify-content:center;
+  }
+  .book {
+    width:92%;
+    height:92%;
+    position:relative;
+    transform-style:preserve-3d;
+    margin:0 auto;
+  }
+  .page {
+    position:absolute;
+    inset:0;
+    border-radius:16px;
+    background:#fff;
+    overflow:hidden;
+    box-shadow:0 18px 50px rgba(0,0,0,0.12);
+    transform-origin:left;
+    transition: transform .85s cubic-bezier(.77,.02,.12,1), box-shadow .5s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+  }
+  .page::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: url('images/background.jpg') center/cover no-repeat;
+    opacity:.06;
+    pointer-events:none;
+  }
+
+  .page-content{
+    width:100%;
+    height:100%;
+    padding:32px;
+    display:flex;
+    gap:12px;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+  .page h2{
+    font-family:'Great Vibes',cursive;
+    color:var(--accent);
+    margin:6px 0;
+    font-size:36px;
+  }
+  .lead { font-family:'Amiri',serif; color:var(--muted); font-size:16px; max-width:86%; line-height:1.6; }
+
+  .photo {
+    width:86%;
+    max-width:720px;
+    border-radius:12px;
+    overflow:hidden;
+    background:#fff;
+    box-shadow:0 8px 22px rgba(0,0,0,0.06);
+  }
+  .photo img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:contain; /* show whole image */
+    max-height:380px;
+    background:#fff;
+  }
+
+  /* controls */
+  .controls {
+    display:flex;
+    gap:12px;
+    margin-top:8px;
+  }
+  .btn {
+    padding:10px 14px;
+    border-radius:12px;
+    border:0;
+    cursor:pointer;
+    font-weight:700;
+    background:linear-gradient(180deg,#fff,#fff6);
+    color:var(--accent);
+    box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  }
+  .btn.primary {
+    background:linear-gradient(180deg,#c97b86,#a2555d);
+    color:#fff;
+  }
+
+  /* music control */
+  .music-control{
+    position:fixed;
+    left:16px;
+    bottom:16px;
+    background:rgba(255,255,255,0.95);
+    padding:8px 10px;
+    border-radius:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,0.08);
+    display:flex;
+    gap:10px;
+    align-items:center;
+    z-index:999;
+  }
+
+  /* responsive */
+  @media (max-width:720px){
+    :root{--book-h:72vh}
+    .cover-photo{width:120px;height:120px}
+    .cover h1{font-size:30px}
+    .page h2{font-size:28px}
+    .photo img{max-height:260px}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- COVER (Standalone, first visible) -->
+  <section class="cover" id="cover">
+    <div class="coverSparkles" id="coverSparkles"></div>
+
+    <div class="cover-inner">
+      <h1>Eran &amp; Mikasa</h1>
+      <div class="cover-photo"><img src="images/cover.jpg" alt="Couple"></div>
+      <p>You are warmly invited to celebrate our wedding. Click to open invitation and listen to the melody.</p>
+      <div style="margin-top:12px">
+        <button id="openBtn" class="btn primary">Open Invitation</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOK (hidden initially) -->
+  <div class="book-wrap" id="bookWrap" aria-hidden="true">
+    <div class="book" id="book">
+
+      <!-- Page 0 (cover inside book left side if needed) -->
+      <div class="page" data-idx="0" id="pg-0">
+        <div class="page-content">
+          <h2>Eran &amp; Mikasa</h2>
+          <p class="lead">You're invited — join us with love and duas.</p>
+          <div class="photo"><img src="images/cover.jpg" alt="Couple"></div>
+        </div>
+      </div>
+
+      <!-- Page 1 -->
+      <div class="page" data-idx="1" id="pg-1">
+        <div class="page-content">
+          <h2>Bismillahir Rahmanir Rahim</h2>
+          <p class="lead">Alhamdulillah — we joyfully announce the wedding of our beloved children.</p>
+        </div>
+      </div>
+
+      <!-- Page 2 -->
+      <div class="page" data-idx="2" id="pg-2">
+        <div class="page-content">
+          <h2>Invitation from the Family</h2>
+          <p class="lead">The Yegar Family cordially invites the Khan Family to celebrate the marriage.</p>
+          <div class="photo"><img src="images/family.jpg" alt="Family"></div>
+l        </div>
+      </div>
+
+      <!-- Page 3 (Venue) with Google Maps embed -->
+      <div class="page" data-idx="3" id="pg-3">
+        <div class="page-content">
+          <h2>Wedding Venue</h2>
+          <div class="photo"><img src="images/venue.jpg" alt="Venue"></div>
+          <p class="lead"><strong>Rose Garden Banquet, Mumbai</strong></p>
+
+         <!-- Google Maps embed (updated location) -->
+<div style="width:90%;max-width:720px;margin-top:12px;">
+  <iframe
+    src="https://www.google.com/maps?q=Jiwaji+University+Gwalior,+Sachin+Tendulkar+Rd,+Kailash+Nagar,+Mahalgaon,+Gwalior,+Madhya+Pradesh+474001&output=embed"
+    width="100%" height="300" style="border:0;border-radius:12px;" allowfullscreen="" loading="lazy"
+  ></iframe>
+</div>
+
+
+        </div>
+      </div>
+
+      <!-- Page 4 -->
+      <div class="page" data-idx="4" id="pg-4">
+        <div class="page-content">
+          <h2>Pre-Wedding Moments</h2>
+          <div class="photo"><img src="images/prewedding1.jpg" alt="pre1"></div>
+          <div class="photo"><img src="images/prewedding2.jpg" alt="pre2"></div>
+        </div>
+      </div>
+
+      <!-- Page 5 RSVP -->
+      <div class="page" data-idx="5" id="pg-5">
+        <div class="page-content">
+          <h2>RSVP</h2>
+          <div style="width:86%;max-width:520px;margin:auto">
+            <input id="r_name" placeholder="Full name" style="width:100%;padding:10px;border-radius:8px;border:1px solid #eee;margin:8px 0">
+            <select id="r_attend" style="width:100%;padding:10px;border-radius:8px;margin:8px 0">
+              <option value="">Will you attend?</option>
+              <option value="yes">Yes — InshAllah</option>
+              <option value="no">No — Sorry</option>
+            </select>
+            <textarea id="r_msg" placeholder="Message" rows="3" style="width:100%;padding:10px;border-radius:8px;margin:8px 0"></textarea>
+            <div style="display:flex;gap:10px;justify-content:center;">
+              <button id="r_submit" class="btn primary">Submit RSVP</button>
+            </div>
+            <div id="r_status" style="text-align:center;margin-top:8px;color:#2f7a56"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page 6 -->
+      <div class="page" data-idx="6" id="pg-6">
+        <div class="page-content">
+          <h2>Thank You</h2>
+          <p class="lead">Alhamdulillah — we look forward to celebrating this blessed day with you. — Eran &amp; Mikasa</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- controls -->
+  <div class="controls" id="controls" style="display:none">
+    <button id="prevBtn" class="btn">Prev</button>
+    <button id="nextBtn" class="btn">Next</button>
+  </div>
+
+</div>
+
+<!-- music control -->
+<div class="music-control" aria-hidden="false">
+  <button id="musicBtn" class="btn">Play</button>
+  <audio id="bgAudio" preload="auto">
+    <source src="sounds/wedding-song.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<!-- flip sound -->
+<audio id="flipAudio" preload="auto"><source src="sounds/flip.mp3" type="audio/mpeg"></audio>
+
+<script>
+/* -------------------------
+   Variables & initialization
+   ------------------------- */
+const cover = document.getElementById('cover');
+const bookWrap = document.getElementById('bookWrap');
+const pages = Array.from(document.querySelectorAll('.page'));
+const total = pages.length;
+let currentIdx = 0; // currently flipped index (0 means cover shown inside book)
+const openBtn = document.getElementById('openBtn');
+const controls = document.getElementById('controls');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const bgAudio = document.getElementById('bgAudio');
+const musicBtn = document.getElementById('musicBtn');
+const flipAudio = document.getElementById('flipAudio');
+const coverSparkles = document.getElementById('coverSparkles');
+
+/* Set inline transforms so there is no flicker/blank */
+function initStack(){
+  for(let i=0;i<total;i++){
+    const p = pages[i];
+    p.style.zIndex = total - i;
+    if(i===0){
+      // first page inside book kept front-facing
+      p.style.transform = 'rotateY(0deg)';
+    } else {
+      p.style.transform = 'rotateY(180deg)';
+    }
+    // ensure content visible (avoid blank pages)
+    const pc = p.querySelector('.page-content');
+    if(pc) pc.style.opacity = '1';
+  }
+}
+initStack();
+
+/* Helper: flip pages by index (pages with idx <= n become -180deg, rest 0deg) */
+function flipToIndex(n){
+  for(let i=0;i<total;i++){
+    if(i <= n) pages[i].style.transform = 'rotateY(-180deg)';
+    else pages[i].style.transform = 'rotateY(0deg)';
+    pages[i].style.zIndex = total - i;
+  }
+  currentIdx = n;
+}
+
+/* Flip sound */
+function playFlip(){
+  try{ flipAudio.currentTime = 0; flipAudio.play(); }catch(e){}
+}
+
+/* -------------------------
+   Cover sparkles generator
+   ------------------------- */
+function spawnCoverSparkles(count){
+  const colors = ['#ff88aa','#ffd66b','#9dd3ff','#cda4ff'];
+  for(let i=0;i<count;i++){
+    const s = document.createElement('span');
+    s.textContent = Math.random()<0.6 ? '✨' : '🌟';
+    s.style.left = (10 + Math.random()*80) + '%';
+    s.style.top = (10 + Math.random()*70) + '%';
+    s.style.color = colors[Math.floor(Math.random()*colors.length)];
+    s.style.fontSize = (12 + Math.random()*18) + 'px';
+    coverSparkles.appendChild(s);
+    setTimeout(()=> s.remove(), 900 + Math.random()*600);
+  }
+}
+setInterval(()=> { if(cover && cover.style.display !== 'none') spawnCoverSparkles(4); }, 800);
+
+/* -------------------------
+   Open button (user gesture)
+   ------------------------- */
+openBtn.addEventListener('click', () => {
+  // play music (user gesture) — set volume gentle
+  bgAudio.volume = 0.7;
+  bgAudio.play().then(()=> musicBtn.textContent = 'Pause').catch(()=> { musicBtn.textContent='Play'; console.log('Audio play blocked'); });
+
+  // hide cover, show book and controls
+  cover.style.transition = 'opacity .6s ease, transform .6s ease';
+  cover.style.opacity = '0';
+  cover.style.transform = 'scale(.98) translateY(-6px)';
+  setTimeout(()=> { cover.style.display = 'none'; }, 650);
+
+  bookWrap.style.display = 'flex';
+  bookWrap.style.opacity = '0';
+  bookWrap.style.transition = 'opacity .6s ease';
+  setTimeout(()=> bookWrap.style.opacity = '1', 30);
+
+  // show controls
+  controls.style.display = 'flex';
+
+  // ensure initial state: show page 0 front (inside book we've already set transforms)
+  flipToIndex(0);
+  playFlip();
+});
+
+/* Music button */
+musicBtn.addEventListener('click', () => {
+  if(bgAudio.paused){
+    bgAudio.play().then(()=> musicBtn.textContent='Pause').catch(()=> musicBtn.textContent='Play');
+  } else {
+    bgAudio.pause();
+    musicBtn.textContent = 'Play';
+  }
+});
+
+/* Navigation */
+nextBtn.addEventListener('click', () => {
+  if(currentIdx < total - 1){
+    currentIdx++;
+    flipToIndex(currentIdx);
+    playFlip();
+  }
+});
+prevBtn.addEventListener('click', () => {
+  if(currentIdx > 0){
+    currentIdx--;
+    flipToIndex(currentIdx);
+    playFlip();
+  } else {
+    // return to cover
+    bookWrap.style.display = 'none';
+    controls.style.display = 'none';
+    cover.style.display = 'flex';
+  }
+});
+
+/* RSVP logic (localStorage) */
+document.getElementById('r_submit').addEventListener('click', () => {
+  const name = document.getElementById('r_name').value.trim();
+  const attend = document.getElementById('r_attend').value;
+  const msg = document.getElementById('r_msg').value.trim();
+  const status = document.getElementById('r_status');
+  if(!name || !attend){ status.textContent = 'Please enter name and attendance choice.'; status.style.color = '#b44b59'; return; }
+  const store = JSON.parse(localStorage.getItem('rsvps') || '[]');
+  store.push({name, attend, msg, ts:Date.now()});
+  localStorage.setItem('rsvps', JSON.stringify(store));
+  status.textContent = `Shukriya ${name}! RSVP received.`;
+  status.style.color = '#2f7a56';
+  setTimeout(()=> { document.getElementById('r_name').value=''; document.getElementById('r_attend').value=''; document.getElementById('r_msg').value=''; }, 900);
+});
+
+/* Accessibility: keyboard left/right */
+document.addEventListener('keydown', (e) => {
+  if(bookWrap.style.display === 'flex'){
+    if(e.key === 'ArrowRight') nextBtn.click();
+    if(e.key === 'ArrowLeft') prevBtn.click();
+  }
+});
+</script>
+
+</body>
+</html>
